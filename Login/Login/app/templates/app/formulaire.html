@@ -1,0 +1,57 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+    <form>
+    {{ formulaire.as_p }}
+        <span id="passwordStrength"></span>
+     </form>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+   $(document).ready(function () {
+       $('#passwordInput, #confirmPasswordInput').on('keyup', function (e) {
+               
+           if ($('#passwordInput').val() != '' && $('#confirmPasswordInput').val() != '' && $('#passwordInput').val() != $('#confirmPasswordInput').val()) {
+               $('#passwordStrength').removeClass().addClass('alert alert-error').html('Les mot de passe ne correspondent pas');
+
+               return false;
+           };
+     
+    
+           // Doit avoir une lettre majuscule, chiffre et minuscule
+           var strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g");
+
+           // Doit avoir une lettre en majuscule minuscule et chiffre
+           var mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+   
+           // Must be at least 6 characters long
+           var okRegex = new RegExp("(?=.{6,}).*", "g");
+
+           if (okRegex.test($(this).val()) === false) {
+               // If ok regex doesn't match the password
+               $('#passwordStrength').removeClass().addClass('alert alert-error').html('Le mot de passe doit avoir au moins 6 caractères');
+
+           } else if (strongRegex.test($(this).val())) {
+               // If reg ex matches strong password
+               $('#passwordStrength').removeClass().addClass('alert alert-success').html('Mot de passe -- ok!');
+           } else if (mediumRegex.test($(this).val())) {
+               // If medium password matches the reg ex
+               $('#passwordStrength').removeClass().addClass('alert alert-info').html('Rajouter un chiffre, une lettre en majuscule et des caractères spéciaux!');
+           } else {
+               // If password is ok
+               $('#passwordStrength').removeClass().addClass('alert alert-error').html('Sécurité basse, ajoutez au moins un chiffre et une lettre en majuscule');
+           }
+
+           return true;
+   
+   
+       });
+
+   });
+</script>
+
+{% endblock %}
